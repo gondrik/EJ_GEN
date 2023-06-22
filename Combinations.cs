@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Text;
 
 namespace EuroJack
@@ -63,11 +64,11 @@ namespace EuroJack
 
             if (ln != null)
             {
-                retVal = ln.Num1 != ln.Num2 && ln.Num2 != ln.Num3 && ln.Num3 != ln.Num4 && ln.Num4 != ln.Num5;
+                retVal = !ln.foundDuplicities(ln.addNumbers);
 
                 if (retVal)
                 {
-                    retVal = ln.AddNum1 != ln.AddNum2;
+                    retVal = !ln.foundDuplicities(ln.numbers);
                 }
 
                 if (retVal)
@@ -85,98 +86,101 @@ namespace EuroJack
                 {
                     foreach (var item in ignoreNum)
                     {
-
-                        retVal = (item.Num1 == ln.Num1 || item.Num1 == ln.Num2 || item.Num1 == ln.Num3 || item.Num1 == ln.Num4 || item.Num1 == ln.Num5) &&
-                                (item.Num2 == ln.Num1 || item.Num2 == ln.Num2 || item.Num2 == ln.Num3 || item.Num2 == ln.Num4 || item.Num2 == ln.Num5) &&
-                                (item.Num3 == ln.Num1 || item.Num3 == ln.Num2 || item.Num3 == ln.Num3 || item.Num3 == ln.Num4 || item.Num3 == ln.Num5) &&
-                                (item.Num4 == ln.Num1 || item.Num4 == ln.Num2 || item.Num4 == ln.Num3 || item.Num4 == ln.Num4 || item.Num4 == ln.Num5) &&
-                                (item.Num5 == ln.Num1 || item.Num5 == ln.Num2 || item.Num5 == ln.Num3 || item.Num5 == ln.Num4 || item.Num5 == ln.Num5);
+                        retVal = !Enumerable.SequenceEqual(item.addNumbers.ToArray(), ln.addNumbers.ToArray());
 
                         if (retVal)
                         {
-                            retVal = (item.AddNum1 != ln.AddNum1 && item.AddNum2 != ln.Num2);
+                            retVal = !Enumerable.SequenceEqual(item.numbers.ToArray(), ln.numbers.ToArray());
                         }
 
                         if (!retVal)
                             break;
                     }
-
-
                 }
             }
-
             return retVal;
         }
-
-
     }
 
 
     internal class LotteryNum
     {
         private const int MaxNum = 50;
-        private const int MaxAddNum = 10;
+        private const int MaxAddNum = 12;
 
         public LotteryNum()
         {
-            Num1 = 1;
-            Num2 = 1;
-            Num3 = 1;
-            Num4 = 1;
-            Num5 = 1;
-            AddNum1 = 1;
-            AddNum2 = 1;
+            fillLists();
         }
 
-        public int Num1 { get; private set; }
-        public int Num2 { get; private set; }
-        public int Num3 { get; private set; }
-        public int Num4 { get; private set; }
-        public int Num5 { get; private set; }
-
-        public int AddNum1 { get; private set; }
-        public int AddNum2 { get; private set; }
+        // init cisla 12345 usetria nadbytocne incrementy z 1 1 1 1 1  1 1 1 1 2  1 1 1 1 3 (ziadne cislo sa nevyskytuje opakovane) 
+        public int Num1 = 1;
+        public int Num2 = 2;
+        public int Num3 = 3;
+        public int Num4 = 4;
+        public int Num5 = 5;
+        public List<int> numbers;
+        public List<int> addNumbers;
+        public int AddNum1 = 1;
+        public int AddNum2 = 2;
 
         public void Increase()
         {
-            Num1++;
-
-            if (Num1 > MaxAddNum)
-            {
-                Num1 = 1;
-
-                Num2++;
-                if (Num2 > MaxNum)
-                {
-                    Num2 = 1;
-
-                    Num3++;
-                    if (Num3 > MaxNum)
-                    {
-                        Num3 = 1;
-                        Num4++;
-                        if (Num4 > MaxNum)
-                        {
-                            Num4 = 1;
-                            Num5++;
-                            if (Num5 > MaxNum)
-                            {
-                                Num5 = 1;
-                                AddNum1++;
-                                if (AddNum1 > MaxAddNum)
-                                {
-                                    AddNum1 = 1;
-                                    AddNum2++;
-                                    if (AddNum2 > MaxAddNum)
+            if (!incrementSignleNum(ref Num5))
+                if (!incrementSignleNum(ref Num4))
+                    if (!incrementSignleNum(ref Num3))
+                        if (!incrementSignleNum(ref Num2))
+                            if (!incrementSignleNum(ref Num1))
+                                if (!incrementSignleNum(ref AddNum2, MaxAddNum))
+                                    if (!incrementSignleNum(ref AddNum1, MaxAddNum))
                                     {
-                                        return;
+
                                     }
-                                }
-                            }
-                        }
-                    }
+            fillLists();
+
+        }
+
+        private void fillLists()
+        {
+            numbers = new List<int> { Num1, Num2, Num3, Num4, Num5 };
+            addNumbers = new List<int> { AddNum1, AddNum2 };
+
+            // zoradit list - nezalezi na poradi 1 2 3 4 5 = 5 3 1 2 4
+            numbers.Sort();
+            addNumbers.Sort();
+        }
+
+        public bool foundDuplicities(List<int> i_numbers)
+        {
+            bool retVal = false;
+            for (int i = 0; i < i_numbers.Count - 1; ++i)
+            {
+                if (i_numbers[i] == i_numbers[i + 1])
+                {
+                    retVal = true;
+                    break;
                 }
             }
+            return retVal;
+        }
+
+
+
+        private bool incrementSignleNum(ref int num, int maxNum = MaxNum)
+        {
+            bool retVal = true;
+            // cisla sa v liste nemozu opakovat 1 2 3 5 4 (4 incrementuje kym nebude 6)
+            // pri preteceni sa nastavi na 1 a vrati false (umozni increment dalsieho v poradi)
+            do
+            {
+                num++;
+            } while (this.numbers.Contains(num));
+            if (num > maxNum)
+            {
+                num = 1;
+                retVal = false;
+            }
+            return retVal;
         }
 
         public bool IsEnd()
@@ -205,6 +209,11 @@ namespace EuroJack
 
             AddNum1 = Convert.ToInt32(add[0]);
             AddNum2 = Convert.ToInt32(add[1]);
+
+            numbers = new List<int> { Num1, Num2, Num3, Num4, Num5 };
+            numbers.Sort();
+            addNumbers = new List<int> { AddNum1, AddNum2 };
+            addNumbers.Sort();
         }
 
         public int Num1 { get; private set; }
@@ -212,7 +221,8 @@ namespace EuroJack
         public int Num3 { get; private set; }
         public int Num4 { get; private set; }
         public int Num5 { get; private set; }
-
+        public List<int> numbers;
+        public List<int> addNumbers;
         public int AddNum1 { get; private set; }
         public int AddNum2 { get; private set; }
 
