@@ -12,6 +12,7 @@ namespace EuroJack
         private const string fileName = "numbers.txt";
         private const string ignorNumFileName = "ignoreNumbers.txt";
         private static long counter = 0;
+        private static int addNum2 = -1;
 
         static List<IgnoreNum> ignoreNum = new List<IgnoreNum>();
 
@@ -50,6 +51,16 @@ namespace EuroJack
                     }
 
                     sb.AppendLine(str);
+                }
+                else
+                {
+                    if (addNum2 != lotNum.AddNum2)
+                    {
+                        addNum2 = lotNum.AddNum2;
+
+                        var str = $"{lotNum.Num1:D2},{lotNum.Num2:D2},{lotNum.Num3:D2},{lotNum.Num4:D2},{lotNum.Num5:D2}-{lotNum.AddNum1:D2},{lotNum.AddNum2:D2}";
+                        Console.WriteLine(str);
+                    }
                 }
 
                 lotNum.Increase();
@@ -130,12 +141,12 @@ namespace EuroJack
         public LotteryNum()
         {
             Num1 = 1;
-            Num2 = 1;
-            Num3 = 1;
-            Num4 = 1;
-            Num5 = 1;
+            Num2 = 2;
+            Num3 = 3;
+            Num4 = 4;
+            Num5 = 5;
             AddNum1 = 1;
-            AddNum2 = 1;
+            AddNum2 = 2;
         }
 
         public int Num1 { get; private set; }
