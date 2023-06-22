@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Metrics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -10,6 +11,7 @@ namespace EuroJack
     {
         private const string fileName = "numbers.txt";
         private const string ignorNumFileName = "ignoreNumbers.txt";
+        private static long counter = 0;
 
         static List<IgnoreNum> ignoreNum = new List<IgnoreNum>();
 
@@ -40,7 +42,13 @@ namespace EuroJack
                 {
                     var str = $"{lotNum.Num1:D2},{lotNum.Num2:D2},{lotNum.Num3:D2},{lotNum.Num4:D2},{lotNum.Num5:D2}-{lotNum.AddNum1:D2},{lotNum.AddNum2:D2}";
 
-                    Console.WriteLine(str);
+                    counter++;
+                    if (counter > 200000)
+                    {
+                        Console.WriteLine(str);
+                        counter = 0;
+                    }
+
                     sb.AppendLine(str);
                 }
 
@@ -74,7 +82,7 @@ namespace EuroJack
                 {
                     for (int i = 1; i < 50; i++)
                     {
-                        retVal = ln.Num1 != ln.Num2 + i && ln.Num2 + i != ln.Num3 + i && ln.Num3 + i != ln.Num4 + i && ln.Num4 + 1 != ln.Num5 + 1;
+                        retVal = ln.Num1 != ln.Num2 + i && ln.Num2 + i != ln.Num3 + i && ln.Num3 + i != ln.Num4 + i && ln.Num4 + i != ln.Num5 + i;
 
                         if (!retVal)
                             break;
@@ -86,11 +94,11 @@ namespace EuroJack
                     foreach (var item in ignoreNum)
                     {
 
-                        retVal = (item.Num1 == ln.Num1 || item.Num1 == ln.Num2 || item.Num1 == ln.Num3 || item.Num1 == ln.Num4 || item.Num1 == ln.Num5) &&
-                                (item.Num2 == ln.Num1 || item.Num2 == ln.Num2 || item.Num2 == ln.Num3 || item.Num2 == ln.Num4 || item.Num2 == ln.Num5) &&
-                                (item.Num3 == ln.Num1 || item.Num3 == ln.Num2 || item.Num3 == ln.Num3 || item.Num3 == ln.Num4 || item.Num3 == ln.Num5) &&
-                                (item.Num4 == ln.Num1 || item.Num4 == ln.Num2 || item.Num4 == ln.Num3 || item.Num4 == ln.Num4 || item.Num4 == ln.Num5) &&
-                                (item.Num5 == ln.Num1 || item.Num5 == ln.Num2 || item.Num5 == ln.Num3 || item.Num5 == ln.Num4 || item.Num5 == ln.Num5);
+                        retVal = !((item.Num1 == ln.Num1 || item.Num1 == ln.Num2 || item.Num1 == ln.Num3 || item.Num1 == ln.Num4 || item.Num1 == ln.Num5) ||
+                                (item.Num2 == ln.Num1 || item.Num2 == ln.Num2 || item.Num2 == ln.Num3 || item.Num2 == ln.Num4 || item.Num2 == ln.Num5) ||
+                                (item.Num3 == ln.Num1 || item.Num3 == ln.Num2 || item.Num3 == ln.Num3 || item.Num3 == ln.Num4 || item.Num3 == ln.Num5) ||
+                                (item.Num4 == ln.Num1 || item.Num4 == ln.Num2 || item.Num4 == ln.Num3 || item.Num4 == ln.Num4 || item.Num4 == ln.Num5) ||
+                                (item.Num5 == ln.Num1 || item.Num5 == ln.Num2 || item.Num5 == ln.Num3 || item.Num5 == ln.Num4 || item.Num5 == ln.Num5));
 
                         if (retVal)
                         {
@@ -114,8 +122,10 @@ namespace EuroJack
 
     internal class LotteryNum
     {
+        private const int StartNum = 1;
         private const int MaxNum = 50;
-        private const int MaxAddNum = 10;
+        private const int MaxAddNum = 12;
+        private int[] ignoreNum = { 1, 11, 50 };
 
         public LotteryNum()
         {
@@ -139,37 +149,44 @@ namespace EuroJack
 
         public void Increase()
         {
-            Num1++;
+            bool wasOVerFulled = false;
+            (Num1, wasOVerFulled) = IncrementValue(Num1, new[] { Num2, Num3, Num4, Num5 });
 
-            if (Num1 > MaxAddNum)
+            if (wasOVerFulled)
             {
-                Num1 = 1;
+                Num1 = StartNum;
 
-                Num2++;
-                if (Num2 > MaxNum)
+                (Num2, wasOVerFulled) = IncrementValue(Num2, new[] { Num1, Num3, Num4, Num5 });
+                if (wasOVerFulled)
                 {
-                    Num2 = 1;
+                    Num2 = StartNum;
 
-                    Num3++;
-                    if (Num3 > MaxNum)
+                    (Num3, wasOVerFulled) = IncrementValue(Num3, new[] { Num2, Num1, Num4, Num5 });
+                    if (wasOVerFulled)
                     {
-                        Num3 = 1;
-                        Num4++;
-                        if (Num4 > MaxNum)
+                        Num3 = StartNum;
+
+                        (Num4, wasOVerFulled) = IncrementValue(Num4, new[] { Num2, Num3, Num1, Num5 });
+                        if (wasOVerFulled)
                         {
-                            Num4 = 1;
-                            Num5++;
-                            if (Num5 > MaxNum)
+                            Num4 = StartNum;
+                            (Num5, wasOVerFulled) = IncrementValue(Num5, new[] { Num2, Num3, Num4, Num1 });
+                            if (wasOVerFulled)
                             {
-                                Num5 = 1;
+                                Num5 = StartNum;
                                 AddNum1++;
+
+                                while (AddNum1 == AddNum2)
+                                    AddNum1++;
+
                                 if (AddNum1 > MaxAddNum)
                                 {
-                                    AddNum1 = 1;
+                                    AddNum1 = StartNum;
                                     AddNum2++;
+
                                     if (AddNum2 > MaxAddNum)
                                     {
-                                        return;
+                                        throw new Exception("Koniec hladania");
                                     }
                                 }
                             }
@@ -182,6 +199,28 @@ namespace EuroJack
         public bool IsEnd()
         {
             return Num1 == MaxNum && Num2 == MaxAddNum && Num3 == MaxNum && Num4 == MaxNum && Num5 == MaxNum && AddNum1 == MaxAddNum && AddNum2 == MaxAddNum;
+        }
+
+        private (int, bool) IncrementValue(int startValue, int[] existing)
+        {
+            var retVal = startValue;
+            var wasOverfulled = false;
+
+            while (true)
+            {
+                retVal++;
+
+                if (retVal > MaxNum)
+                {
+                    retVal = StartNum;
+                    wasOverfulled = true;
+                }
+
+                if (!ignoreNum.Contains(retVal) && !existing.Contains(retVal))
+                    break;
+            }
+
+            return (retVal, wasOverfulled);
         }
     }
 
