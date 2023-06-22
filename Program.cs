@@ -11,7 +11,6 @@ namespace EuroJack
     {
         static void Main(string[] args)
         {
-
             //PlanetLottery.Run();
 
             Combinations.Run();
