@@ -157,7 +157,19 @@ namespace EuroJack
 
                         if (retVal)
                         {
-                            retVal = (item.AddNum1 != ln.AddNum1 && item.AddNum2 != ln.AddNum2);
+                            var conditionalAdd = randomer.Next(1, 2);
+
+
+                            switch (conditional)
+                            {
+                                case 1:
+                                    retVal = (item.AddNum1 != ln.AddNum1 && item.AddNum2 != ln.AddNum2);
+                                    break;
+                                case 2:
+                                    retVal = (item.AddNum1 != ln.AddNum1 || item.AddNum2 != ln.AddNum2);
+                                    break;
+                            }
+
                         }
 
                         if (!retVal)
