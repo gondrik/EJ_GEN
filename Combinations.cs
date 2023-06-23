@@ -157,7 +157,7 @@ namespace EuroJack
 
                         if (retVal)
                         {
-                            retVal = (item.AddNum1 != ln.AddNum1 && item.AddNum2 != ln.Num2);
+                            retVal = (item.AddNum1 != ln.AddNum1 && item.AddNum2 != ln.AddNum2);
                         }
 
                         if (!retVal)
