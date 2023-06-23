@@ -13,6 +13,7 @@ namespace EuroJack
         private const string fileName = "numbers.txt";
         private const string ignorNumFileName = "ignoreNumbers.txt";
         private static long counter = 0;
+        private static Random randomer = new Random();
 
         static List<IgnoreNum> ignoreNum = new List<IgnoreNum>();
 
@@ -105,11 +106,72 @@ namespace EuroJack
                 {
                     foreach (var item in ignoreNum)
                     {
-                        retVal = !Enumerable.SequenceEqual(item.addNumbers.ToArray(), ln.addNumbers.ToArray());
+
+                        var conditional = randomer.Next(1, 6);
+
+
+                        switch (conditional)
+                        {
+                            case 1:
+                                retVal = !((item.numbers[0] == ln.numbers[0] || item.numbers[0] == ln.numbers[1] || item.numbers[0] == ln.numbers[2] || item.numbers[0] == ln.numbers[3] || item.numbers[0] == ln.numbers[4]) &&
+                                            ((item.numbers[1] == ln.numbers[0] || item.numbers[1] == ln.numbers[1] || item.numbers[1] == ln.numbers[2] || item.numbers[1] == ln.numbers[3] || item.numbers[1] == ln.numbers[4]) ||
+                                            (item.numbers[2] == ln.numbers[0] || item.numbers[2] == ln.numbers[1] || item.numbers[2] == ln.numbers[2] || item.numbers[2] == ln.numbers[3] || item.numbers[2] == ln.numbers[4]) ||
+                                            (item.numbers[3] == ln.numbers[0] || item.numbers[3] == ln.numbers[1] || item.numbers[3] == ln.numbers[2] || item.numbers[3] == ln.numbers[3] || item.numbers[3] == ln.numbers[4]) ||
+                                          (item.numbers[4] == ln.numbers[0] || item.numbers[4] == ln.numbers[1] || item.numbers[4] == ln.numbers[2] || item.numbers[4] == ln.numbers[3] || item.numbers[4] == ln.numbers[4])));
+                                break;
+                            case 2:
+                                retVal = !(((item.numbers[0] == ln.numbers[0] || item.numbers[0] == ln.numbers[1] || item.numbers[0] == ln.numbers[2] || item.numbers[0] == ln.numbers[3] || item.numbers[0] == ln.numbers[4]) ||
+                                          (item.numbers[1] == ln.numbers[0] || item.numbers[1] == ln.numbers[1] || item.numbers[1] == ln.numbers[2] || item.numbers[1] == ln.numbers[3] || item.numbers[1] == ln.numbers[4])) &&
+                                            ((item.numbers[2] == ln.numbers[0] || item.numbers[2] == ln.numbers[1] || item.numbers[2] == ln.numbers[2] || item.numbers[2] == ln.numbers[3] || item.numbers[2] == ln.numbers[4]) ||
+                                            (item.numbers[3] == ln.numbers[0] || item.numbers[3] == ln.numbers[1] || item.numbers[3] == ln.numbers[2] || item.numbers[3] == ln.numbers[3] || item.numbers[3] == ln.numbers[4]) ||
+                                            (item.numbers[4] == ln.numbers[0] || item.numbers[4] == ln.numbers[1] || item.numbers[4] == ln.numbers[2] || item.numbers[4] == ln.numbers[3] || item.numbers[4] == ln.numbers[4])));
+                                break;
+                            case 3:
+                                retVal = !(((item.numbers[0] == ln.numbers[0] || item.numbers[0] == ln.numbers[1] || item.numbers[0] == ln.numbers[2] || item.numbers[0] == ln.numbers[3] || item.numbers[0] == ln.numbers[4]) ||
+                                          (item.numbers[1] == ln.numbers[0] || item.numbers[1] == ln.numbers[1] || item.numbers[1] == ln.numbers[2] || item.numbers[1] == ln.numbers[3] || item.numbers[1] == ln.numbers[4]) ||
+                                          (item.numbers[2] == ln.numbers[0] || item.numbers[2] == ln.numbers[1] || item.numbers[2] == ln.numbers[2] || item.numbers[2] == ln.numbers[3] || item.numbers[2] == ln.numbers[4])) &&
+                                          ((item.numbers[3] == ln.numbers[0] || item.numbers[3] == ln.numbers[1] || item.numbers[3] == ln.numbers[2] || item.numbers[3] == ln.numbers[3] || item.numbers[3] == ln.numbers[4]) ||
+                                          (item.numbers[4] == ln.numbers[0] || item.numbers[4] == ln.numbers[1] || item.numbers[4] == ln.numbers[2] || item.numbers[4] == ln.numbers[3] || item.numbers[4] == ln.numbers[4])));
+                                break;
+                            case 4:
+                                retVal = !(((item.numbers[0] == ln.numbers[0] || item.numbers[0] == ln.numbers[1] || item.numbers[0] == ln.numbers[2] || item.numbers[0] == ln.numbers[3] || item.numbers[0] == ln.numbers[4]) ||
+                                          (item.numbers[1] == ln.numbers[0] || item.numbers[1] == ln.numbers[1] || item.numbers[1] == ln.numbers[2] || item.numbers[1] == ln.numbers[3] || item.numbers[1] == ln.numbers[4]) ||
+                                          (item.numbers[2] == ln.numbers[0] || item.numbers[2] == ln.numbers[1] || item.numbers[2] == ln.numbers[2] || item.numbers[2] == ln.numbers[3] || item.numbers[2] == ln.numbers[4]) ||
+                                          (item.numbers[3] == ln.numbers[0] || item.numbers[3] == ln.numbers[1] || item.numbers[3] == ln.numbers[2] || item.numbers[3] == ln.numbers[3] || item.numbers[3] == ln.numbers[4])) &&
+                                          (item.numbers[4] == ln.numbers[0] || item.numbers[4] == ln.numbers[1] || item.numbers[4] == ln.numbers[2] || item.numbers[4] == ln.numbers[3] || item.numbers[4] == ln.numbers[4]));
+                                break;
+                            case 5:
+                                retVal = !((item.numbers[0] == ln.numbers[0] || item.numbers[0] == ln.numbers[1] || item.numbers[0] == ln.numbers[2] || item.numbers[0] == ln.numbers[3] || item.numbers[0] == ln.numbers[4]) &&
+                                          (item.numbers[1] == ln.numbers[0] || item.numbers[1] == ln.numbers[1] || item.numbers[1] == ln.numbers[2] || item.numbers[1] == ln.numbers[3] || item.numbers[1] == ln.numbers[4]) &&
+                                          (item.numbers[2] == ln.numbers[0] || item.numbers[2] == ln.numbers[1] || item.numbers[2] == ln.numbers[2] || item.numbers[2] == ln.numbers[3] || item.numbers[2] == ln.numbers[4]) &&
+                                          (item.numbers[3] == ln.numbers[0] || item.numbers[3] == ln.numbers[1] || item.numbers[3] == ln.numbers[2] || item.numbers[3] == ln.numbers[3] || item.numbers[3] == ln.numbers[4]) &&
+                                          (item.numbers[4] == ln.numbers[0] || item.numbers[4] == ln.numbers[1] || item.numbers[4] == ln.numbers[2] || item.numbers[4] == ln.numbers[3] || item.numbers[4] == ln.numbers[4]));
+                                break;
+                            case 6:
+                                retVal = !((item.numbers[0] == ln.numbers[0] || item.numbers[0] == ln.numbers[1] || item.numbers[0] == ln.numbers[2] || item.numbers[0] == ln.numbers[3] || item.numbers[0] == ln.numbers[4]) ||
+                                          (item.numbers[1] == ln.numbers[0] || item.numbers[1] == ln.numbers[1] || item.numbers[1] == ln.numbers[2] || item.numbers[1] == ln.numbers[3] || item.numbers[1] == ln.numbers[4]) ||
+                                          (item.numbers[2] == ln.numbers[0] || item.numbers[2] == ln.numbers[1] || item.numbers[2] == ln.numbers[2] || item.numbers[2] == ln.numbers[3] || item.numbers[2] == ln.numbers[4]) ||
+                                          (item.numbers[3] == ln.numbers[0] || item.numbers[3] == ln.numbers[1] || item.numbers[3] == ln.numbers[2] || item.numbers[3] == ln.numbers[3] || item.numbers[3] == ln.numbers[4]) ||
+                                          (item.numbers[4] == ln.numbers[0] || item.numbers[4] == ln.numbers[1] || item.numbers[4] == ln.numbers[2] || item.numbers[4] == ln.numbers[3] || item.numbers[4] == ln.numbers[4]));
+                                break;
+
+                        }
 
                         if (retVal)
                         {
-                            retVal = !Enumerable.SequenceEqual(item.numbers.ToArray(), ln.numbers.ToArray());
+                            var conditionalAdd = randomer.Next(1, 2);
+
+
+                            switch (conditional)
+                            {
+                                case 1:
+                                    retVal = (item.addNumbers[0] != ln.addNumbers[0] && item.addNumbers[1] != ln.addNumbers[1]);
+                                    break;
+                                case 2:
+                                    retVal = (item.addNumbers[0] != ln.addNumbers[0] || item.addNumbers[1] != ln.addNumbers[1]);
+                                    break;
+                            }
+
                         }
 
                         if (!retVal)
@@ -118,6 +180,7 @@ namespace EuroJack
 
 
                 }
+
             }
 
             return retVal;
