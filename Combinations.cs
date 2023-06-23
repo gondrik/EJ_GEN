@@ -44,7 +44,7 @@ namespace EuroJack
                     var str = $"{lotNum.numbers[0]:D2},{lotNum.numbers[1]:D2},{lotNum.numbers[2]:D2},{lotNum.numbers[3]:D2},{lotNum.numbers[4]:D2}-{lotNum.addNumbers[0]:D2},{lotNum.addNumbers[1]:D2}";
 
                     counter++;
-                    if (counter > 0)//20000)
+                    if (counter > 20000)
                     {
                         Console.WriteLine(str);
                         counter = 0;
@@ -130,7 +130,7 @@ namespace EuroJack
         private const int StartNum = 1;
         private const int MaxNum = 50;
         private const int MaxAddNum = 12;
-        public List<int> ignoreNum = new List<int>{ 1, 11, 50 };
+        public List<int> ignoreNum = new List<int> { 1, 11, 50 };
 
         public LotteryNum()
         {
