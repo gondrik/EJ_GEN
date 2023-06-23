@@ -14,7 +14,7 @@ namespace EuroJack
         private const string ignorNumFileName = "ignoreNumbers.txt";
         private static long counter = 0;
         private static Random randomer = new Random();
-
+        private static bool isEnd = false;
         static List<IgnoreNum> ignoreNum = new List<IgnoreNum>();
 
         public static void Run()
@@ -38,7 +38,7 @@ namespace EuroJack
             var lotNum = new LotteryNum();
             var sb = new StringBuilder();
 
-            while (!lotNum.IsEnd())
+            while (!lotNum.IsEnd() || isEnd)
             {
                 if (IsCorrectNum(lotNum))
                 {
@@ -57,6 +57,7 @@ namespace EuroJack
                 do
                 {
                     lotNum.Increase();
+                    isEnd = lotNum.IsEnd();
                 } while (lotNum.numbers.Intersect(lotNum.ignoreNum).Any());
             }
 
