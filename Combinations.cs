@@ -170,21 +170,22 @@ namespace EuroJack
                 (Num2, wasOVerFulled) = IncrementValue(Num2, new[] { Num1, Num3, Num4, Num5 });
                 if (wasOVerFulled)
                 {
-                    Num2 = StartNum;
+                    Num2 = Num1 == StartNum ? StartNum + 1 : StartNum;
 
                     (Num3, wasOVerFulled) = IncrementValue(Num3, new[] { Num2, Num1, Num4, Num5 });
                     if (wasOVerFulled)
                     {
-                        Num3 = StartNum;
+                        Num3 = Num2 == StartNum ? StartNum + 1 : StartNum;
 
                         (Num4, wasOVerFulled) = IncrementValue(Num4, new[] { Num2, Num3, Num1, Num5 });
                         if (wasOVerFulled)
                         {
-                            Num4 = StartNum;
+                            Num4 = Num3 == StartNum ? StartNum + 1 : StartNum;
+
                             (Num5, wasOVerFulled) = IncrementValue(Num5, new[] { Num2, Num3, Num4, Num1 });
                             if (wasOVerFulled)
                             {
-                                Num5 = StartNum;
+                                Num5 = Num4 == StartNum ? StartNum + 1 : StartNum;
                                 AddNum1++;
 
                                 while (AddNum1 == AddNum2)
@@ -197,7 +198,7 @@ namespace EuroJack
 
                                     if (AddNum2 > MaxAddNum)
                                     {
-                                        throw new Exception("Koniec hladania");
+                                        // throw new Exception("Koniec hladania");
                                     }
                                 }
                             }
@@ -209,7 +210,7 @@ namespace EuroJack
 
         public bool IsEnd()
         {
-            return Num1 == MaxNum && Num2 == MaxAddNum && Num3 == MaxNum && Num4 == MaxNum && Num5 == MaxNum && AddNum1 == MaxAddNum && AddNum2 == MaxAddNum;
+            return AddNum2 > MaxAddNum;
         }
 
         private (int, bool) IncrementValue(int startValue, int[] existing)
