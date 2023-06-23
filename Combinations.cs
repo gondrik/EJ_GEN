@@ -15,6 +15,7 @@ namespace EuroJack
         private static long counter = 0;
         private static Random randomer = new Random();
         private static bool isEnd = false;
+        private static int addNum2 = 0;
         static List<IgnoreNum> ignoreNum = new List<IgnoreNum>();
 
         public static void Run()
@@ -53,6 +54,17 @@ namespace EuroJack
 
                     sb.AppendLine(str);
                 }
+                else
+                {
+                    if (addNum2 != lotNum.AddNum2)
+                    {
+                        addNum2 = lotNum.AddNum2;
+
+                        var str = $"{lotNum.Num1:D2},{lotNum.Num2:D2},{lotNum.Num3:D2},{lotNum.Num4:D2},{lotNum.Num5:D2}-{lotNum.AddNum1:D2},{lotNum.AddNum2:D2}";
+                        Console.WriteLine(str);
+                    }
+                }
+
 
                 do
                 {
@@ -148,7 +160,7 @@ namespace EuroJack
                                           (item.numbers[3] == ln.numbers[0] || item.numbers[3] == ln.numbers[1] || item.numbers[3] == ln.numbers[2] || item.numbers[3] == ln.numbers[3] || item.numbers[3] == ln.numbers[4]) &&
                                           (item.numbers[4] == ln.numbers[0] || item.numbers[4] == ln.numbers[1] || item.numbers[4] == ln.numbers[2] || item.numbers[4] == ln.numbers[3] || item.numbers[4] == ln.numbers[4]));
                                 break;
-                           default:
+                            default:
                                 retVal = !((item.numbers[0] == ln.numbers[0] || item.numbers[0] == ln.numbers[1] || item.numbers[0] == ln.numbers[2] || item.numbers[0] == ln.numbers[3] || item.numbers[0] == ln.numbers[4]) ||
                                           (item.numbers[1] == ln.numbers[0] || item.numbers[1] == ln.numbers[1] || item.numbers[1] == ln.numbers[2] || item.numbers[1] == ln.numbers[3] || item.numbers[1] == ln.numbers[4]) ||
                                           (item.numbers[2] == ln.numbers[0] || item.numbers[2] == ln.numbers[1] || item.numbers[2] == ln.numbers[2] || item.numbers[2] == ln.numbers[3] || item.numbers[2] == ln.numbers[4]) ||
