@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.Metrics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -41,18 +42,21 @@ namespace EuroJack
                 if (IsCorrectNum(lotNum))
                 {
                     var str = $"{lotNum.numbers[0]:D2},{lotNum.numbers[1]:D2},{lotNum.numbers[2]:D2},{lotNum.numbers[3]:D2},{lotNum.numbers[4]:D2}-{lotNum.addNumbers[0]:D2},{lotNum.addNumbers[1]:D2}";
-                    Console.WriteLine(str);
-                    /*counter++;
-                    if (counter > 20000)
+
+                    counter++;
+                    if (counter > 0)//20000)
                     {
                         Console.WriteLine(str);
                         counter = 0;
-                    }*/
+                    }
 
                     sb.AppendLine(str);
                 }
 
-                lotNum.Increase();
+                do
+                {
+                    lotNum.Increase();
+                } while (lotNum.numbers.Intersect(lotNum.ignoreNum).Any());
             }
 
             if (sb.Length > 0)
@@ -118,8 +122,6 @@ namespace EuroJack
 
             return retVal;
         }
-
-
     }
 
 
@@ -128,25 +130,9 @@ namespace EuroJack
         private const int StartNum = 1;
         private const int MaxNum = 50;
         private const int MaxAddNum = 12;
-        private int[] ignoreNum = { 1, 11, 50 };
+        public List<int> ignoreNum = new List<int>{ 1, 11, 50 };
 
         public LotteryNum()
-        {
-            fillLists();
-        }
-
-        // init cisla 12345 usetria nadbytocne incrementy z 1 1 1 1 1  1 1 1 1 2  1 1 1 1 3 (ziadne cislo sa nevyskytuje opakovane) 
-        public int Num1 = 5;
-        public int Num2 = 4;
-        public int Num3 = 3;
-        public int Num4 = 2;
-        public int Num5 = 1;
-        public List<int> numbers = new List<int> { 5, 4, 3, 2, 1 };
-        public List<int> addNumbers = new List<int> { 2, 1 };
-        public int AddNum1 = 2;
-        public int AddNum2 = 1;
-
-        private void fillLists()
         {
             numbers[0] = Num1;
             numbers[1] = Num2;
@@ -164,6 +150,17 @@ namespace EuroJack
             addNumbers.Reverse();
         }
 
+        // init cisla 12345 usetria nadbytocne incrementy z 1 1 1 1 1  1 1 1 1 2  1 1 1 1 3 (ziadne cislo sa nevyskytuje opakovane) 
+        public int Num1 = 5;
+        public int Num2 = 4;
+        public int Num3 = 3;
+        public int Num4 = 2;
+        public int Num5 = 1;
+        public List<int> numbers = new List<int> { 5, 4, 3, 2, 1 };
+        public List<int> addNumbers = new List<int> { 2, 1 };
+        public int AddNum1 = 2;
+        public int AddNum2 = 1;
+
         public bool foundDuplicities(List<int> i_numbers)
         {
             bool retVal = false;
@@ -179,37 +176,19 @@ namespace EuroJack
         }
 
 
-
-        private bool IsOverFlowByIncrement(ref int num, int maxNum = MaxNum)
-        {
-            bool overflow = false;
-            // cisla sa v liste nemozu opakovat 1 2 3 5 4 (4 incrementuje kym nebude 6)
-            // pri preteceni sa nastavi na 1 a vrati false (umozni increment dalsieho v poradi)
-            do
-            {
-                num++;
-            } while (this.numbers.Contains(num) || this.ignoreNum.Contains(num));
-            if (num > maxNum)
-            {
-                num = 1;
-                overflow = true;
-            }
-            return overflow;
-        }
-
         public void Increase()
         {
             bool isAddOverFlow = false;
             bool isOverFlow = false;
             for (int i_add = 0; i_add < addNumbers.Count; ++i_add)
-            {                
+            {
                 addNumbers[i_add]++;
 
                 if (addNumbers[i_add] + i_add <= MaxAddNum)
                 {
-                    if(isAddOverFlow)
+                    if (isAddOverFlow)
                     {
-                        for(int x = 1; x<=i_add;++x)
+                        for (int x = 1; x <= i_add; ++x)
                         {
                             addNumbers[i_add - x] = addNumbers[i_add] + x;
                         }
@@ -234,8 +213,9 @@ namespace EuroJack
                 // pokracovanie v inkrementacii hlavnych cisel
                 for (int i = 0; i < numbers.Count; ++i)
                 {
-
                     numbers[i]++;
+
+
                     if (numbers[i] + i <= MaxNum) // max kombinacia bude 50 49 48 47 46 resp 12 11
                     {
                         if (isOverFlow)
@@ -250,7 +230,10 @@ namespace EuroJack
                     }
                     else
                     {
-                        numbers[i] = MaxNum - i;
+                        do
+                        {
+                            numbers[i]--;
+                        } while (ignoreNum.Contains(numbers[i]) || numbers[i] > MaxNum);
                         isOverFlow = true;
                     }
                 }
