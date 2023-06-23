@@ -105,7 +105,7 @@ namespace EuroJack
                     foreach (var item in ignoreNum)
                     {
 
-                        var conditional = randomer.Next(1, 6);
+                        var conditional = randomer.Next(1, 100);
 
 
                         switch (conditional)
@@ -145,7 +145,7 @@ namespace EuroJack
                                           (item.Num4 == ln.Num1 || item.Num4 == ln.Num2 || item.Num4 == ln.Num3 || item.Num4 == ln.Num4 || item.Num4 == ln.Num5) &&
                                           (item.Num5 == ln.Num1 || item.Num5 == ln.Num2 || item.Num5 == ln.Num3 || item.Num5 == ln.Num4 || item.Num5 == ln.Num5));
                                 break;
-                            case 6:
+                            default:
                                 retVal = !((item.Num1 == ln.Num1 || item.Num1 == ln.Num2 || item.Num1 == ln.Num3 || item.Num1 == ln.Num4 || item.Num1 == ln.Num5) ||
                                           (item.Num2 == ln.Num1 || item.Num2 == ln.Num2 || item.Num2 == ln.Num3 || item.Num2 == ln.Num4 || item.Num2 == ln.Num5) ||
                                           (item.Num3 == ln.Num1 || item.Num3 == ln.Num2 || item.Num3 == ln.Num3 || item.Num3 == ln.Num4 || item.Num3 == ln.Num5) ||
