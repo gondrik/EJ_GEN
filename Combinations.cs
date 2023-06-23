@@ -108,7 +108,7 @@ namespace EuroJack
                     foreach (var item in ignoreNum)
                     {
 
-                        var conditional = randomer.Next(1, 6);
+                        var conditional = randomer.Next(1, 1000);
 
 
                         switch (conditional)
@@ -148,7 +148,7 @@ namespace EuroJack
                                           (item.numbers[3] == ln.numbers[0] || item.numbers[3] == ln.numbers[1] || item.numbers[3] == ln.numbers[2] || item.numbers[3] == ln.numbers[3] || item.numbers[3] == ln.numbers[4]) &&
                                           (item.numbers[4] == ln.numbers[0] || item.numbers[4] == ln.numbers[1] || item.numbers[4] == ln.numbers[2] || item.numbers[4] == ln.numbers[3] || item.numbers[4] == ln.numbers[4]));
                                 break;
-                            case 6:
+                           default:
                                 retVal = !((item.numbers[0] == ln.numbers[0] || item.numbers[0] == ln.numbers[1] || item.numbers[0] == ln.numbers[2] || item.numbers[0] == ln.numbers[3] || item.numbers[0] == ln.numbers[4]) ||
                                           (item.numbers[1] == ln.numbers[0] || item.numbers[1] == ln.numbers[1] || item.numbers[1] == ln.numbers[2] || item.numbers[1] == ln.numbers[3] || item.numbers[1] == ln.numbers[4]) ||
                                           (item.numbers[2] == ln.numbers[0] || item.numbers[2] == ln.numbers[1] || item.numbers[2] == ln.numbers[2] || item.numbers[2] == ln.numbers[3] || item.numbers[2] == ln.numbers[4]) ||
