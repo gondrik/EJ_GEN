@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Metrics;
 using System.IO;
 using System.Linq;
-using System.Net.Http.Headers;
 using System.Text;
 
 namespace EuroJack
@@ -11,6 +11,7 @@ namespace EuroJack
     {
         private const string fileName = "numbers.txt";
         private const string ignorNumFileName = "ignoreNumbers.txt";
+        private static long counter = 0;
 
         static List<IgnoreNum> ignoreNum = new List<IgnoreNum>();
 
@@ -39,9 +40,15 @@ namespace EuroJack
             {
                 if (IsCorrectNum(lotNum))
                 {
-                    var str = $"{lotNum.Num1:D2},{lotNum.Num2:D2},{lotNum.Num3:D2},{lotNum.Num4:D2},{lotNum.Num5:D2}-{lotNum.AddNum1:D2},{lotNum.AddNum2:D2}";
-
+                    var str = $"{lotNum.numbers[0]:D2},{lotNum.numbers[1]:D2},{lotNum.numbers[2]:D2},{lotNum.numbers[3]:D2},{lotNum.numbers[4]:D2}-{lotNum.addNumbers[0]:D2},{lotNum.addNumbers[1]:D2}";
                     Console.WriteLine(str);
+                    /*counter++;
+                    if (counter > 20000)
+                    {
+                        Console.WriteLine(str);
+                        counter = 0;
+                    }*/
+
                     sb.AppendLine(str);
                 }
 
@@ -74,8 +81,16 @@ namespace EuroJack
                 if (retVal)
                 {
                     for (int i = 1; i < 50; i++)
-                    {
-                        retVal = ln.Num1 != ln.Num2 + i && ln.Num2 + i != ln.Num3 + i && ln.Num3 + i != ln.Num4 + i && ln.Num4 + 1 != ln.Num5 + 1;
+                    {            // [4] [3] [2] [1] [0]
+                                 // 1   2   3   4   5
+                                 // 1   3   5   7   9
+                                 // 1   4   7   10  13
+                                 // ...
+                        retVal =
+                            ln.numbers[4] != ln.numbers[3] + i &&
+                            ln.numbers[3] != ln.numbers[2] + i &&
+                            ln.numbers[2] != ln.numbers[1] + i &&
+                            ln.numbers[1] != ln.numbers[0] + i;
 
                         if (!retVal)
                             break;
@@ -96,17 +111,24 @@ namespace EuroJack
                         if (!retVal)
                             break;
                     }
+
+
                 }
             }
+
             return retVal;
         }
+
+
     }
 
 
     internal class LotteryNum
     {
+        private const int StartNum = 1;
         private const int MaxNum = 50;
         private const int MaxAddNum = 12;
+        private int[] ignoreNum = { 1, 11, 50 };
 
         public LotteryNum()
         {
@@ -114,40 +136,32 @@ namespace EuroJack
         }
 
         // init cisla 12345 usetria nadbytocne incrementy z 1 1 1 1 1  1 1 1 1 2  1 1 1 1 3 (ziadne cislo sa nevyskytuje opakovane) 
-        public int Num1 = 1;
-        public int Num2 = 2;
+        public int Num1 = 5;
+        public int Num2 = 4;
         public int Num3 = 3;
-        public int Num4 = 4;
-        public int Num5 = 5;
-        public List<int> numbers;
-        public List<int> addNumbers;
-        public int AddNum1 = 1;
-        public int AddNum2 = 2;
-
-        public void Increase()
-        {
-            if (!incrementSignleNum(ref Num5))
-                if (!incrementSignleNum(ref Num4))
-                    if (!incrementSignleNum(ref Num3))
-                        if (!incrementSignleNum(ref Num2))
-                            if (!incrementSignleNum(ref Num1))
-                                if (!incrementSignleNum(ref AddNum2, MaxAddNum))
-                                    if (!incrementSignleNum(ref AddNum1, MaxAddNum))
-                                    {
-
-                                    }
-            fillLists();
-
-        }
+        public int Num4 = 2;
+        public int Num5 = 1;
+        public List<int> numbers = new List<int> { 5, 4, 3, 2, 1 };
+        public List<int> addNumbers = new List<int> { 2, 1 };
+        public int AddNum1 = 2;
+        public int AddNum2 = 1;
 
         private void fillLists()
         {
-            numbers = new List<int> { Num1, Num2, Num3, Num4, Num5 };
-            addNumbers = new List<int> { AddNum1, AddNum2 };
+            numbers[0] = Num1;
+            numbers[1] = Num2;
+            numbers[2] = Num3;
+            numbers[3] = Num4;
+            numbers[4] = Num5;
 
-            // zoradit list - nezalezi na poradi 1 2 3 4 5 = 5 3 1 2 4
+            addNumbers[0] = AddNum1;
+            addNumbers[1] = AddNum2;
+
+            // zoradit list od zostupne - nezalezi na poradi 5 4 3 2 1 = 5 3 1 2 4
             numbers.Sort();
+            numbers.Reverse();
             addNumbers.Sort();
+            addNumbers.Reverse();
         }
 
         public bool foundDuplicities(List<int> i_numbers)
@@ -166,26 +180,86 @@ namespace EuroJack
 
 
 
-        private bool incrementSignleNum(ref int num, int maxNum = MaxNum)
+        private bool IsOverFlowByIncrement(ref int num, int maxNum = MaxNum)
         {
-            bool retVal = true;
+            bool overflow = false;
             // cisla sa v liste nemozu opakovat 1 2 3 5 4 (4 incrementuje kym nebude 6)
             // pri preteceni sa nastavi na 1 a vrati false (umozni increment dalsieho v poradi)
             do
             {
                 num++;
-            } while (this.numbers.Contains(num));
+            } while (this.numbers.Contains(num) || this.ignoreNum.Contains(num));
             if (num > maxNum)
             {
                 num = 1;
-                retVal = false;
+                overflow = true;
             }
-            return retVal;
+            return overflow;
+        }
+
+        public void Increase()
+        {
+            bool isAddOverFlow = false;
+            bool isOverFlow = false;
+            for (int i_add = 0; i_add < addNumbers.Count; ++i_add)
+            {                
+                addNumbers[i_add]++;
+
+                if (addNumbers[i_add] + i_add <= MaxAddNum)
+                {
+                    if(isAddOverFlow)
+                    {
+                        for(int x = 1; x<=i_add;++x)
+                        {
+                            addNumbers[i_add - x] = addNumbers[i_add] + x;
+                        }
+                        isAddOverFlow = false;
+                    }
+                    break;
+                }
+                else
+                {
+                    addNumbers[i_add] = MaxAddNum - i_add;
+                    isAddOverFlow = true;
+                }
+            }
+
+            if (isAddOverFlow) // dodatkove cisla dosiahli pre aktualne hlavne cisla max (skoncili na overflow)
+            {
+                // pre aktualnu paticu boli vygenerovane vsetky kombinacie dodatkov 
+                // reset dodatkovych cisel
+                addNumbers[0] = 2;
+                addNumbers[1] = 1;
+
+                // pokracovanie v inkrementacii hlavnych cisel
+                for (int i = 0; i < numbers.Count; ++i)
+                {
+
+                    numbers[i]++;
+                    if (numbers[i] + i <= MaxNum) // max kombinacia bude 50 49 48 47 46 resp 12 11
+                    {
+                        if (isOverFlow)
+                        {
+                            for (int x = 1; x <= i; ++x)
+                            {
+                                numbers[i - x] = numbers[i] + x;
+                            }
+                            isOverFlow = false;
+                        }
+                        break;
+                    }
+                    else
+                    {
+                        numbers[i] = MaxNum - i;
+                        isOverFlow = true;
+                    }
+                }
+            }
         }
 
         public bool IsEnd()
         {
-            return Num1 == MaxNum && Num2 == MaxAddNum && Num3 == MaxNum && Num4 == MaxNum && Num5 == MaxNum && AddNum1 == MaxAddNum && AddNum2 == MaxAddNum;
+            return numbers[0] == 50 && numbers[1] == 49 && numbers[2] == 48 && numbers[3] == 47 && numbers[4] == 56 && addNumbers[0] == 12 && addNumbers[1] == 11;
         }
     }
 
@@ -211,9 +285,12 @@ namespace EuroJack
             AddNum2 = Convert.ToInt32(add[1]);
 
             numbers = new List<int> { Num1, Num2, Num3, Num4, Num5 };
-            numbers.Sort();
             addNumbers = new List<int> { AddNum1, AddNum2 };
+
+            numbers.Sort();
+            numbers.Reverse();
             addNumbers.Sort();
+            addNumbers.Reverse();
         }
 
         public int Num1 { get; private set; }
